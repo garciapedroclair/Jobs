@@ -1,0 +1,51 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.db
+*.sqlite3
+
+# Virtual env
+.venv/
+env/
+venv/
+
+# Config
+.env
+*.env
+
+# Logs
+*.log
+*.out
+*.err
+
+# VSCode / IDE
+.vscode/
+.idea/
+
+# Docker
+*.pid
+*.seed
+*.bak
+*.swp
+*.swo
+docker-compose.override.yml
+
+# Ollama data
+ollama_data/
+root/.ollama/
+
+# PostgreSQL data
+db_data/
+
+# Cache
+*.egg-info/
+.eggs/
+.cache/
+.mypy_cache/
+.pytest_cache/
+__snapshots__/
+
+# JSON results gerados
+summary_iterations.json
