@@ -16,14 +16,15 @@ from langchain_core.exceptions import OutputParserException
 class ResumoReclamacao(BaseModel):
     """Estrutura de dados para o resumo de uma reclamação."""
     # Descrições detalhadas para guiar o LLM na produção de texto corrido.
-    Contexto: str = Field(description="Um resumo detalhado e objetivo do cenário e do histórico da reclamação, incluindo informações cruciais como datas e produtos.")
+    Descrição: str = Field(description="Um resumo detalhado e objetivo do cenário e do histórico da reclamação, incluindo informações cruciais como datas e produtos.")
     Problemática: str = Field(description="O cerne do problema, descrevendo o que motivou a reclamação e a falha específica do serviço ou produto.")
     Solução: str = Field(description="A resolução proposta ou o resultado final da interação, se houver, focando em como o problema foi ou deveria ser resolvido.")
 
 # --- 2. Configuração do LLM Ollama com Saída Estruturada (Global) ---
 
 # Configurar o LLM Ollama. Temperatura baixa garante maior adesão ao formato.
-ollama_llm = ChatOllama(model="llama3:instruct", temperature=0.0) 
+# ollama_llm = ChatOllama(model="llama3:instruct", temperature=0.0)
+ollama_llm = ChatOllama(model="qwen2:7b-instruct", temperature=0.0) 
 
 # Instruir o LLM a usar o Pydantic Schema para garantir a saída JSON
 structured_llm = ollama_llm.with_structured_output(ResumoReclamacao)
@@ -61,7 +62,7 @@ class Summarizer:
         
         system_prompt = (
             "Você é um assistente de resumo. Sua resposta DEVE ser um objeto JSON válido, contendo APENAS as chaves: "
-            "'Contexto', 'Problemática' e 'Solução'. "
+            "'Descrição', 'Problemática' e 'Solução'. "
             "O VALOR de cada uma dessas chaves DEVE ser uma STRING de TEXTO descritivo e completo. "
             "NÃO inclua nenhum texto, introdução ou explicação além do objeto JSON."
         )
@@ -155,7 +156,7 @@ class Summarizer:
         """
         
         # O Gemini usa response_mime_type para forçar a saída JSON
-        prompt_system = "Analise o texto e gere um objeto JSON estrito com as chaves \"Contexto\", \"Problemática\" e \"Solução\". O valor de cada chave deve ser uma string de texto corrido. NÃO inclua nenhum texto ou formatação adicional fora do JSON."
+        prompt_system = "Analise o texto e gere um objeto JSON estrito com as chaves \"Descrição\", \"Problemática\" e \"Solução\". O valor de cada chave deve ser uma string de texto corrido. NÃO inclua nenhum texto ou formatação adicional fora do JSON."
 
         try:
             response = model.generate_content(
@@ -208,7 +209,7 @@ if __name__ == "__main__":
         })
 
         # Salvar o progresso em um novo arquivo JSON a cada iteração
-        with open("10_reclamacoes_resumidas_lc_ollama.json", "w", encoding="utf-8") as f:
+        with open("10_reclamacoes_resumidas_lc_ollama_qwen2_7b.json", "w", encoding="utf-8") as f:
             json.dump(result, f, ensure_ascii=False, indent=2)
             
     print(f"\nProcessamento concluído. Resultados salvos em '10_reclamacoes_resumidas_lc_ollama.json'.")
